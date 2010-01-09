@@ -75,10 +75,9 @@ module Globalize
         end
 
         self.translated_attribute_names.each do |key|
-          join = :"#{self.name.underscore}_translations_#{I18n.locale}"
           field = "#{self.name.underscore}_translations.#{key}"
-          self.named_scope :"ascend_by_#{key}", lambda{ { :order => "#{field} ASC", :joins => join } }
-          self.named_scope :"descend_by_#{key}", lambda{ { :order => "#{field} DESC", :joins => join } }
+          self.named_scope :"ascend_by_#{key}", lambda{ { :order => "#{field} ASC", :joins => :"#{self.name.underscore}_translations_#{I18n.locale}" } }
+          self.named_scope :"descend_by_#{key}", lambda{ { :order => "#{field} DESC", :joins => :"#{self.name.underscore}_translations_#{I18n.locale}" } }
         end
       end
 
