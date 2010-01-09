@@ -66,6 +66,20 @@ module Globalize
         }
 
         attr_names.each { |attr_name| translated_attr_accessor(attr_name) }
+
+        locale_list = translation_class.scoped(:select => 'DISTINCT locale').map(&:locale) rescue ['en']
+        locale_list.each do |lang_code|
+          self.has_many :"#{self.name.underscore}_translations_#{lang_code}", 
+            :class_name => "#{self.name}::Translation",
+            :conditions => "#{self.name.underscore}_translations.locale = '#{lang_code}'"
+        end
+
+        self.translated_attribute_names.each do |key|
+          join = :"#{self.name.underscore}_translations_#{I18n.locale}"
+          field = "#{self.name.underscore}_translations.#{key}"
+          self.named_scope :"ascend_by_#{key}", lambda{ { :order => "#{field} ASC", :joins => join } }
+          self.named_scope :"descend_by_#{key}", lambda{ { :order => "#{field} DESC", :joins => join } }
+        end
       end
 
       def translates?
