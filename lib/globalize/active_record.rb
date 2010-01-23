@@ -65,6 +65,10 @@ module Globalize
           { :include => :translations, :conditions => [conditions.join(' AND '), locale] }
         }
 
+        [(options[:extensions] || [])].flatten.each do |sym|
+          send(sym)
+        end
+
         attr_names.each { |attr_name| translated_attr_accessor(attr_name) }
       end
             
