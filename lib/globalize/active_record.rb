@@ -71,8 +71,11 @@ module Globalize
       def create_sorting_scopes
         self.translated_attribute_names.each do |key|
           field  = "#{quoted_translation_table_name}.#{key}"
-          self.named_scope :"ascend_by_#{key}",  lambda{ { :order => "#{field} ASC",  :joins => :translations, :conditions => ["#{quoted_translation_table_name}.locale = ?", I18n.locale.to_s] } }
-          self.named_scope :"descend_by_#{key}", lambda{ { :order => "#{field} DESC", :joins => :translations, :conditions => ["#{quoted_translation_table_name}.locale = ?", I18n.locale.to_s] } }
+          self.named_scope :"ascend_by_#{key}",  
+            lambda{ { 
+              :order => "#{field} ASC",  
+              :joins => "LEFT OUTER JOIN `#{translation_table_name}` ON (`#{translation_table_name}`.#{class_name.foreign_key} = `#{table_name}`.id AND `#{translation_table_name}`.locale = '#{I18n.locale.to_s}')"
+            } }
         end
       end
       
