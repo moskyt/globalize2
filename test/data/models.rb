@@ -49,3 +49,8 @@ end
 class Validatee < ActiveRecord::Base
   translates :string
 end
+
+class Sortable < ActiveRecord::Base
+  translates :title
+  create_sorting_scopes
+end
